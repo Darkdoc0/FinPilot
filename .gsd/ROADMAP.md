@@ -1,3 +1,4 @@
+
 # ROADMAP.md
 
 > **Current Phase**: Not started
@@ -14,7 +15,7 @@
 ## Phases
 
 ### Phase 1: Foundation & Onboarding
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Setup React PWA, offline shell, routing, theming system, and the 8-step onboarding flow.
 
 ### Phase 2: Budgeting & Planning Engine
