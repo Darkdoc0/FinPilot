@@ -5,8 +5,8 @@
 > **Milestone**: v1.0
 
 ## Must-Haves (from SPEC)
-- [ ] Complete budgeting experience (Home, Transactions, Plan)
-- [ ] Goals tracking & safe-to-spend / investable-surplus calculations
+- [x] Complete budgeting experience (Home, Transactions, Plan)
+- [x] Goals tracking & safe-to-spend / investable-surplus calculations
 - [ ] Market dashboards, asset metrics, and watchlists
 - [ ] Paper investing simulation
 - [ ] Educational AI assistant with disclaimers
@@ -19,7 +19,7 @@
 **Objective**: Setup React PWA, offline shell, routing, theming system, and the 8-step onboarding flow.
 
 ### Phase 2: Budgeting & Planning Engine
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Implement "Plan" calculations (Income - Bills - Goals = Flexible), "Home" dashboard, and "Transactions" history with basic filters and CSV import.
 
 ### Phase 3: Market Intelligence & Watchlists
