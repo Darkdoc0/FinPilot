@@ -3,8 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const { GoogleGenAI } = require('@google/genai');
 const axios = require('axios');
-const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -12,21 +10,8 @@ app.use(express.json());
 const PORT = process.env.PORT || 3001;
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || '';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
-const PLAID_CLIENT_ID = process.env.PLAID_CLIENT_ID;
-const PLAID_SECRET = process.env.PLAID_SECRET;
-const PLAID_ENV = process.env.PLAID_ENV || 'sandbox';
-
-// Initialize Plaid Client
-const configuration = new Configuration({
-  basePath: PlaidEnvironments[PLAID_ENV],
-  baseOptions: {
-    headers: {
-      'PLAID-CLIENT-ID': PLAID_CLIENT_ID,
-      'PLAID-SECRET': PLAID_SECRET,
-    },
-  },
-});
-const plaidClient = new PlaidApi(configuration);
+const SETU_CLIENT_ID = process.env.SETU_CLIENT_ID || '';
+const SETU_CLIENT_SECRET = process.env.SETU_CLIENT_SECRET || '';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -191,74 +176,31 @@ app.get('/api/stocks/:symbol/candles', async (req, res) => {
   }
 });
 
-// Plaid endpoints
-app.post('/api/plaid/create_link_token', async (req, res) => {
+// Setu Account Aggregator (Sandbox Mock endpoints)
+app.post('/api/setu/consent', async (req, res) => {
   try {
-    const request = {
-      user: { client_user_id: 'user-id-finpilot-demo' },
-      client_name: 'FinPilot',
-      products: ['auth', 'transactions'],
-      country_codes: ['US'],
-      language: 'en',
-    };
-    const response = await plaidClient.linkTokenCreate(request);
-    res.json(response.data);
-  } catch (err) {
-    console.error('Error creating Plaid link token:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to create link token' });
-  }
-});
-
-let ACCESS_TOKEN = null;
-
-app.post('/api/plaid/exchange_public_token', async (req, res) => {
-  try {
-    const { public_token } = req.body;
-    const response = await plaidClient.itemPublicTokenExchange({
-      public_token: public_token,
+    if (!SETU_CLIENT_ID || !SETU_CLIENT_SECRET) {
+      return res.status(400).json({ error: 'Setu credentials not configured' });
+    }
+    
+    // In a real integration, we'd sign the consent object with a JWS private key
+    // and hit POST https://fiu-sandbox.setu.co/v2/consents
+    
+    // Returning a dummy redirect URL simulating Setu's Sandbox AA portal
+    res.json({
+      id: 'consent-mock-12345',
+      redirectUrl: 'https://fiu-sandbox.setu.co/mock-consent?session=12345',
     });
-    ACCESS_TOKEN = response.data.access_token;
-    // We would typically store ACCESS_TOKEN and ITEM_ID in a database here.
-    res.json({ success: true });
   } catch (err) {
-    console.error('Error exchanging public token:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to exchange public token' });
+    console.error('Error creating Setu consent:', err);
+    res.status(500).json({ error: 'Failed to create consent' });
   }
 });
 
-app.get('/api/plaid/transactions', async (req, res) => {
-  try {
-    if (!ACCESS_TOKEN) {
-      return res.status(401).json({ error: 'Plaid not connected' });
-    }
-    // Pull transactions for the last 30 days
-    const now = new Date();
-    const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
-    const request = {
-      access_token: ACCESS_TOKEN,
-      start_date: thirtyDaysAgo.toISOString().split('T')[0],
-      end_date: now.toISOString().split('T')[0],
-    };
-    const response = await plaidClient.transactionsGet(request);
-    res.json(response.data);
-  } catch (err) {
-    console.error('Error fetching transactions:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to fetch transactions' });
-  }
-});
-
-app.get('/api/plaid/balance', async (req, res) => {
-  try {
-    if (!ACCESS_TOKEN) {
-      return res.status(401).json({ error: 'Plaid not connected' });
-    }
-    const request = { access_token: ACCESS_TOKEN };
-    const response = await plaidClient.accountsBalanceGet(request);
-    res.json(response.data);
-  } catch (err) {
-    console.error('Error fetching balance:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to fetch balance' });
-  }
+app.post('/api/setu/webhook', (req, res) => {
+  // Setu will hit this when the user approves/rejects the consent
+  console.log('Received Webhook from Setu:', req.body);
+  res.json({ status: 'ok' });
 });
 
 app.listen(PORT, () => {

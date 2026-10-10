@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTransactions, saveTransactions } from '../utils/storage';
-import { PlaidLinkButton } from './PlaidLinkButton';
+import { SetuConnectButton } from './SetuConnectButton';
 
 function Transactions({ profile }) {
   const [filter, setFilter] = useState('All');
@@ -92,7 +92,7 @@ function Transactions({ profile }) {
           <p className="text-muted text-lg">Review your recent activity.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {!isPlaidConnected && <PlaidLinkButton onConnected={handlePlaidConnected} />}
+          {!isPlaidConnected && <SetuConnectButton onConnected={handlePlaidConnected} />}
           <button className="btn-primary" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }} onClick={() => setIsAdding(!isAdding)}>
             {isAdding ? 'Cancel' : '+ Add'}
           </button>

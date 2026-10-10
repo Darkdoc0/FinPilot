@@ -59,3 +59,11 @@
 - [x] Integrate `@google/genai` SDK and Interactions API
 - [x] Build API key input UI in chat bubble
 - [x] Construct dynamic system prompts using profile context
+
+### Phase 9: Indian Bank Integration (Setu)
+**Status**: Pending
+**Objective**: Replace Plaid with Setu Account Aggregator for Indian banks.
+- [ ] Remove Plaid components
+- [ ] Integrate Setu frontend SDK
+- [ ] Build backend endpoints for Setu Consent and Data fetching
+- [ ] Parse FIP data into FinPilot format
