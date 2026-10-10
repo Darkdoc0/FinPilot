@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './index.css';
 import Onboarding from './components/Onboarding';
 import Layout from './components/Layout';
+import FinPilotAI from './components/FinPilotAI';
 import { loadProfile, saveProfile } from './utils/storage';
 
 function App() {
@@ -27,14 +28,21 @@ function App() {
 
   if (!profile) {
     return (
-      <div className="app-container">
-        <h1 style={{textAlign: 'center', color: 'var(--color-primary)'}}>FinPilot</h1>
+      <div className="app-container animate-fade-in">
+        <div className="top-bar justify-center mb-6">
+          <h1 className="logo-text text-center"><span className="logo-fin">Fin</span><span className="logo-pilot">Pilot</span></h1>
+        </div>
         <Onboarding onComplete={handleOnboardingComplete} />
       </div>
     );
   }
 
-  return <Layout profile={profile} />;
+  return (
+    <>
+      <Layout profile={profile} />
+      <FinPilotAI profile={profile} />
+    </>
+  );
 }
 
 export default App;
